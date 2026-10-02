@@ -16,7 +16,19 @@ def _get_df() -> Dialect:
     return Df
 
 
+def _get_toy() -> Dialect:
+    from df_dialect.toy import Toy
+
+    return Toy
+
+
+def _get_ttir() -> Dialect:
+    from df_dialect.ttir import TTIR
+
+    return TTIR
+
+
 DF_UNIVERSE = Universe(
-    all_dialects={"df": _get_df},
+    all_dialects={"df": _get_df, "toy": _get_toy, "ttir": _get_ttir},
     all_passes=dict(ALL_PASSES),
 )

@@ -70,7 +70,7 @@ class LowerContract(RewritePattern):
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: ContractOp, rewriter: PatternRewriter) -> None:
         new_op = ...  # build the replacement with its __init__
-        rewriter.replace_op(op, new_op)  # results of op are rewired to new_op
+        rewriter.replace(op, new_op)  # results of op are rewired to new_op
 
 
 def apply(self, ctx: Context, op: ModuleOp) -> None:

@@ -71,6 +71,7 @@ uv run df-opt examples/matmul_2x2.mlir -p 'df-check-memory{budget-kb=32}'
 | `docs/GLOSSARY.md` | A term is unfamiliar |
 | `docs/ROADMAP.md` | You are looking for something to work on |
 | `docs/decisions/` | You want to know why a choice was made |
+| `docs/TOY.md` | You want the toy dialect that lowers to Tenstorrent TTIR |
 
 ## License
 
