@@ -1,0 +1,24 @@
+name: Bug
+description: Something parses, verifies or prints wrong
+labels: ["bug"]
+body:
+  - type: textarea
+    id: input
+    attributes:
+      label: Input IR
+      render: mlir
+    validations:
+      required: true
+  - type: input
+    id: command
+    attributes:
+      label: Command
+      placeholder: uv run df-opt bug.mlir
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual output
+    validations:
+      required: true

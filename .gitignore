@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.lit_test_times.txt
+tests/filecheck/**/Output/
+dist/
+build/
+*.egg-info/
+.DS_Store

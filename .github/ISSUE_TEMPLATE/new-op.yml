@@ -1,0 +1,43 @@
+name: New op
+description: Propose or claim a new df op
+labels: ["new-op"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Op name
+      placeholder: df.map
+    validations:
+      required: true
+  - type: dropdown
+    id: tier
+    attributes:
+      label: Tier
+      options: ["Tier A (what to compute)", "Tier B (where and how)"]
+    validations:
+      required: true
+  - type: textarea
+    id: syntax
+    attributes:
+      label: Syntax example
+      description: One or two lines of IR showing the op in use.
+      render: mlir
+    validations:
+      required: true
+  - type: textarea
+    id: semantics
+    attributes:
+      label: Meaning
+      description: What the op computes or does, in plain words.
+    validations:
+      required: true
+  - type: textarea
+    id: verifier
+    attributes:
+      label: Verifier rules
+      description: One bullet per rule, each with the error message it should print.
+  - type: textarea
+    id: targets
+    attributes:
+      label: Target mapping
+      description: What it becomes on Cerebras, Tenstorrent, AMD AIE, Furiosa (if known).
