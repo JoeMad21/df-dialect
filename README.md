@@ -27,7 +27,8 @@ df.program @matmul attributes {grid = #df.grid<2x2>} {
 
 ## Quickstart
 
-Linux, macOS or WSL (Windows users: use WSL or the VS Code dev container).
+Linux, macOS or WSL. On native Windows (PowerShell), follow First-Time Setup
+in `CONTRIBUTING.md`.
 
 ```sh
 # 1. Install uv once (no sudo needed): https://docs.astral.sh/uv/

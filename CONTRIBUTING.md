@@ -19,9 +19,20 @@ uv sync
 uv run python scripts/check.py                     # should end with "All checks passed."
 ```
 
-**Windows**
+**Windows (PowerShell)**
 
-Use one of these, in order of preference:
+```powershell
+# once, then open a new terminal so uv is on PATH:
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+git clone https://github.com/JoeMad21/df-dialect.git
+cd df-dialect
+uv sync
+uv run python scripts\check.py                     # should end with "All checks passed."
+```
+
+**Windows (WSL or Dev Container)**
+
+Or use one of these, in order of preference:
 1. WSL (Ubuntu), then follow the Linux steps inside it.
 2. VS Code with the Dev Containers extension: open the folder and choose
    "Reopen in Container". Setup runs automatically.
