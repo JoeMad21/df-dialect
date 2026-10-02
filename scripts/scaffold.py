@@ -146,7 +146,7 @@ class TodoPattern(RewritePattern):
 
     @op_type_rewrite_pattern
     def match_and_rewrite(self, op: ProgramOp, rewriter: PatternRewriter) -> None:
-        # TODO: inspect `op` and call rewriter.replace_op(...) or rewriter.erase_op(...).
+        # TODO: inspect `op` and call rewriter.replace(op, new_op) or rewriter.erase_op(op).
         return
 
 
