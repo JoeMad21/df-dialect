@@ -19,7 +19,8 @@ mlir-aie).
 
 ## Decision
 
-Use xDSL, pinned to an exact version (`xdsl==0.71.0`). Upgrade in a dedicated
+Use xDSL, pinned to an exact version (`xdsl==0.73.0`, commit a2544953, which
+also carries the CSL dialects used by the toy lowering). Upgrade in a dedicated
 pull request that runs the full test suite.
 
 ## Consequences

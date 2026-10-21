@@ -6,8 +6,11 @@ write them, for example:
 
     %0 = "ttir.matmul"(%a, %b) : (tensor<64x128xf32>, tensor<128x64xf32>) -> tensor<64x64xf32>
 
-Operand form matches tt-mlir commit a6bd5d2 (2026-09-16): no output operand.
-The real definitions live in tt-mlir: include/ttmlir/Dialect/TTIR/IR/TTIROps.td.
+Checked against tt-mlir commit 5f396fd (2026-02-20), the commit LASSI pins:
+the three ops take inputs only, with no destination operand. ttir.matmul also
+has transpose_a and transpose_b attributes that default to false, so the
+generic form above is complete. The real definitions live in tt-mlir:
+include/ttmlir/Dialect/TTIR/IR/TTIROps.td.
 """
 
 from xdsl.dialects.builtin import TensorType
