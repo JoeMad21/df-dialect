@@ -21,7 +21,14 @@ def _convert_toy_to_ttir() -> type[ModulePass]:
     return ConvertToyToTTIRPass
 
 
+def _convert_toy_to_csl() -> type[ModulePass]:
+    from df_dialect.passes.convert_toy_to_csl import ConvertToyToCSLPass
+
+    return ConvertToyToCSLPass
+
+
 ALL_PASSES: dict[str, Callable[[], type[ModulePass]]] = {
     "df-check-memory": _check_memory,
     "convert-toy-to-ttir": _convert_toy_to_ttir,
+    "convert-toy-to-csl": _convert_toy_to_csl,
 }

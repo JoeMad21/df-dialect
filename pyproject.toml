@@ -5,7 +5,7 @@ description = "DF-Dialect: an MLIR dataflow dialect for spatial accelerators, bu
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "xdsl==0.71.0",
+    "xdsl==0.73.0",
 ]
 
 [project.scripts]

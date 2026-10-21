@@ -3,8 +3,8 @@
 Usage:
     df-opt examples/toy_linear.mlir -p convert-toy-to-ttir
 
-The output can be fed to tt-mlir, for example:
-    ttmlir-opt --ttir-to-ttnn-runtime-pipeline="system-desc-path=$DESC" out.mlir
+The output can be fed to tt-mlir (commit 5f396fd), for example:
+    ttmlir-opt --ttir-to-ttnn-backend-pipeline="system-desc-path=$DESC" out.mlir
 """
 
 from __future__ import annotations

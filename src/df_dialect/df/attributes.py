@@ -10,9 +10,9 @@ from __future__ import annotations
 from collections.abc import Sequence
 
 from xdsl.dialects.builtin import IntAttr
+from xdsl.dialects.utils import EnumAttribute
 from xdsl.ir import (
     Attribute,
-    EnumAttribute,
     ParametrizedAttribute,
     SpacedOpaqueSyntaxAttribute,
     TypeAttribute,
