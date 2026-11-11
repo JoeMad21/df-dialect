@@ -38,9 +38,9 @@ ASPLOS '26, arXiv:2601.17754.
 | `src/df_dialect/passes/convert_toy_to_csl.py` | Toy to a one-PE program in xDSL's CSL dialects |
 | `examples/toy_linear.mlir` | `relu(x @ w + b)`, 64x128 inputs |
 | `examples/toy_linear_pe.mlir` | The same layer at 16x32, small enough for one PE |
-| `scripts/demo_toy.py` | Step-by-step demo of both lowerings |
+| `scripts/demo_toy.py` | Step-by-step demo printing TTIR, direct D2M tile compute and CSL |
 | `scripts/split_csl.py` | Splits printed CSL into program and layout files |
-| `tests/filecheck/toy/` | Round-trip, verifier, TTIR and CSL tests |
+| `tests/filecheck/toy/` | Round-trip, verifier, TTIR, D2M and CSL tests |
 
 ## Demo
 
@@ -62,6 +62,52 @@ uv run df-opt examples/toy_linear.mlir -p convert-toy-to-ttir -o build/toy_linea
 
 At the pinned commit these ops take inputs only. `ttir.matmul` also has
 `transpose_a` and `transpose_b`, which default to false.
+
+## Lowering directly to D2M
+
+```sh
+uv run df-opt examples/toy_linear.mlir -p convert-toy-to-d2m
+```
+
+`convert-toy-to-d2m` rewrites each toy op directly into a `d2m.empty`
+destination and a single-core `d2m.generic`. It never constructs TTIR or calls
+its lowering. The output-only D2M and TTCore mirrors follow tt-mlir commit
+`5f396fd`, the same pin as the TTIR mirror. Definitions are in upstream
+[D2MOps.td](https://github.com/tenstorrent/tt-mlir/blob/5f396fd/include/ttmlir/Dialect/D2M/IR/D2MOps.td)
+and `D2MGenericRegionOps.td`.
+
+Each region has `!d2m.cb<tensor<...>>` arguments, `d2m.wait` for inputs,
+`d2m.reserve` for its destination, and `d2m.yield` for the result. Inputs are
+packed with `d2m.tile_tilize_block` into tensors of
+`!ttcore.tile<32x32, f32>`. A `linalg.generic` iterates over those tiles,
+executing the corresponding D2M operation:
+
+| Toy | Tile compute |
+|---|---|
+| `toy.matmul` | `d2m.tile_matmul` (A @ B + accumulator) |
+| `toy.add` | `d2m.tile_add` |
+| `toy.relu` | `d2m.tile_relu` |
+
+Matmul uses `d2m.tile_fill` to zero every output tile before reducing over K
+tiles. `d2m.tile_untilize_block` returns the result to row-major form, preserving
+function signatures and tensor shapes. The three rewrite patterns select their
+tile operation in one line; shared setup handles buffers and iteration.
+
+Supported inputs are **unencoded rank-two f32 tensors with positive static
+dimensions divisible by 32**. Other shapes are rejected before any rewriting.
+Padding, partial tiles, and non-matrix elementwise tensors are not supported.
+There are no pass options.
+
+This is **pre-layout D2M tile compute IR**. Device layouts, host/device
+transfers and backend compilation are later work. Tests verify CLI output,
+parsing/verification, and numerical execution through a test-only D2M tile and
+linalg iteration adapter, compared against independent whole-matrix results.
+Tests include multiple K tiles, poisoned initial storage and shared inputs.
+Vendor compiler and hardware execution have not been tested.
+
+Implementation: `src/df_dialect/passes/convert_toy_to_d2m.py`, with target
+construction in `src/df_dialect/d2m/builders.py` and target mirrors in
+`src/df_dialect/d2m/` and `src/df_dialect/ttcore/`.
 
 ## Lowering to CSL
 

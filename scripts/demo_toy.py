@@ -1,4 +1,4 @@
-"""Walk through the toy lowerings to Tenstorrent TTIR and Cerebras CSL, one step at a time.
+"""Walk through the toy lowerings to TTIR, direct D2M and CSL, one step at a time.
 
 Usage (any OS):
     uv run python scripts/demo_toy.py             # pause after each step
@@ -6,6 +6,7 @@ Usage (any OS):
 
 Generated files go to build/ (ignored by git):
     build/toy_linear.ttir.mlir        TTIR for tt-mlir
+    build/toy_linear.d2m.mlir         Direct D2M tile compute (before device layouts)
     build/toy_linear_pe.cslir.mlir    CSL-IR (xDSL csl dialect)
     build/csl/linear.csl              CSL program for the PE
     build/csl/linear_layout.csl       CSL layout; the file cslc compiles
@@ -52,6 +53,7 @@ def main() -> int:
     df_opt = tool("df-opt")
     BUILD.mkdir(exist_ok=True)
     ttir = BUILD / "toy_linear.ttir.mlir"
+    d2m = BUILD / "toy_linear.d2m.mlir"
     cslir = BUILD / "toy_linear_pe.cslir.mlir"
     csl_txt = BUILD / "toy_linear_pe.csl.txt"
 
@@ -62,12 +64,17 @@ def main() -> int:
         show=ttir,
     )
     step(
-        "3. One Cerebras PE has 48 KB: the 64x128 program does not fit",
+        "3. Lower directly to D2M tile compute (before device layouts)",
+        [df_opt, "examples/toy_linear.mlir", "-p", "convert-toy-to-d2m", "-o", rel(d2m)],
+        show=d2m,
+    )
+    step(
+        "4. One Cerebras PE has 48 KB: the 64x128 program does not fit",
         [df_opt, "examples/toy_linear.mlir", "-p", "convert-toy-to-csl", "--verify-diagnostics"],
     )
-    step("4. Same layer, sized for one PE", show=ROOT / "examples" / "toy_linear_pe.mlir")
+    step("5. Same layer, sized for one PE", show=ROOT / "examples" / "toy_linear_pe.mlir")
     step(
-        "5. Lower to CSL-IR (xDSL csl dialect)",
+        "6. Lower to CSL-IR (xDSL csl dialect)",
         [
             df_opt,
             "examples/toy_linear_pe.mlir",
@@ -79,7 +86,7 @@ def main() -> int:
         show=cslir,
     )
     step(
-        "6. Print CSL source and split it into program and layout files",
+        "7. Print CSL source and split it into program and layout files",
         [
             df_opt,
             "examples/toy_linear_pe.mlir",
@@ -92,11 +99,11 @@ def main() -> int:
         ],
     )
     step(
-        "7. CSL files for the Cerebras compiler",
+        "8. CSL files for the Cerebras compiler",
         [sys.executable, "scripts/split_csl.py", rel(csl_txt), rel(BUILD / "csl")],
         show=BUILD / "csl" / "linear.csl",
     )
-    step("8. Tests for both lowerings", [tool("lit"), "-v", "tests/filecheck/toy"])
+    step("9. Tests for all three lowerings", [tool("lit"), "-v", "tests/filecheck/toy"])
     return 0
 
 

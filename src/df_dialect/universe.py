@@ -28,7 +28,25 @@ def _get_ttir() -> Dialect:
     return TTIR
 
 
+def _get_d2m() -> Dialect:
+    from df_dialect.d2m import D2M
+
+    return D2M
+
+
+def _get_ttcore() -> Dialect:
+    from df_dialect.ttcore import TTCore
+
+    return TTCore
+
+
 DF_UNIVERSE = Universe(
-    all_dialects={"df": _get_df, "toy": _get_toy, "ttir": _get_ttir},
+    all_dialects={
+        "df": _get_df,
+        "toy": _get_toy,
+        "ttir": _get_ttir,
+        "d2m": _get_d2m,
+        "ttcore": _get_ttcore,
+    },
     all_passes=dict(ALL_PASSES),
 )

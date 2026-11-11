@@ -27,8 +27,15 @@ def _convert_toy_to_csl() -> type[ModulePass]:
     return ConvertToyToCSLPass
 
 
+def _convert_toy_to_d2m() -> type[ModulePass]:
+    from df_dialect.passes.convert_toy_to_d2m import ConvertToyToD2MPass
+
+    return ConvertToyToD2MPass
+
+
 ALL_PASSES: dict[str, Callable[[], type[ModulePass]]] = {
     "df-check-memory": _check_memory,
+    "convert-toy-to-d2m": _convert_toy_to_d2m,
     "convert-toy-to-ttir": _convert_toy_to_ttir,
     "convert-toy-to-csl": _convert_toy_to_csl,
 }

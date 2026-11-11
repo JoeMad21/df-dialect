@@ -207,3 +207,18 @@ the actor body. For the 2x2 matmul this is A 16 KB + B 16 KB + C 8 KB = 40 KB.
 `df-partition`, `df-place`, `df-connect`, `df-bufferize` (Tier A to Tier B),
 `convert-df-to-csl`, `convert-df-to-ttkernel`, `convert-df-to-linalg` (CPU
 reference). See `docs/ROADMAP.md`.
+
+## `convert-toy-to-d2m` — Implemented
+
+Directly lowers the sandbox `toy.matmul`, `toy.add`, and `toy.relu` operations
+to single-core, pre-layout `d2m.generic` tensor regions, with no TTIR
+intermediate. Emits `d2m.tile_matmul`, `d2m.tile_add`, and `d2m.tile_relu`
+inside linalg iteration regions over 32x32 tiles. Matmul explicitly initializes
+its accumulator with `d2m.tile_fill`. Packing and unpacking preserve function
+signatures. Supports unencoded rank-two f32 tensors with positive static
+dimensions divisible by 32; other shapes are rejected before rewriting.
+No options. Device layouts and host/device transfers are outside this pass. See [TOY.md](TOY.md#lowering-directly-to-d2m) for details.
+
+```sh
+uv run df-opt examples/toy_linear.mlir -p convert-toy-to-d2m
+```
